@@ -2,7 +2,7 @@
 
 This is a little experimental particle vector calculator. It lets you quickly generate groups of particles with specified rulesets. 
 
-It comes with boids by default, will add more in time to replicate some stuff I saw on youtube. 
+It comes with boids by default, will add more in time to replicate some stuff I saw on youtube. Just open the particleTest.html file to see and tinker with this:
 
 https://user-images.githubusercontent.com/18196383/124330212-c9354200-db41-11eb-99c9-c73f86fdce3c.mp4
 
