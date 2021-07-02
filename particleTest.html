@@ -6,7 +6,7 @@
 <body> 
     <canvas id='canvas' style='width:80vw;height:80vh;'></canvas>
     <script>
-        class ParticleDynamics {
+        class DynamicParticles {
         constructor(
             rules=[
             ['boids',100],
@@ -581,7 +581,7 @@
 
         }
 
-        let particleTest = new ParticleDynamics(
+        let particleTest = new DynamicParticles(
             [['boids',1500],['boids',1000],['boids',500]],
             document.getElementById('canvas'),
             true
