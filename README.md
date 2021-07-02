@@ -8,6 +8,8 @@ https://user-images.githubusercontent.com/18196383/124330212-c9354200-db41-11eb-
 
 Example Usage:
 
+`npm i dynamicparticles`
+
 HTML:
 ```
 <!DOCTYPE html>
@@ -24,6 +26,8 @@ HTML:
 
 JS:
 ```
+import {DynamicParticles} from 'dynamicparticles'
+
 let canvas = document.getElementById('canvas');
 
 let Particles = new DynamicParticles(
