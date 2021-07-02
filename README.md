@@ -4,6 +4,8 @@ This is a little experimental particle vector calculator. It lets you quickly ge
 
 It comes with boids by default, will add more in time to replicate some stuff I saw on youtube. 
 
+https://user-images.githubusercontent.com/18196383/124330212-c9354200-db41-11eb-99c9-c73f86fdce3c.mp4
+
 Example Usage:
 
 HTML:
