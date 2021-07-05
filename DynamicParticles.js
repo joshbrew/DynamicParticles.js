@@ -52,6 +52,7 @@ export class DynamicParticles {
                 attractor:{x:0.5,y:0.5,z:0.5,mul:0.01},
                 groupRadius:200,
                 groupSize:10,
+                searchLimit:25
             },
             plant:{
                 diet:"photosynthetic", //if plant or animal cell: herbivore, carnivore, omnivore, photosynthetic, dead, dead_animal, dead_plant. Determines what other particles they will consume/trend toward
@@ -289,7 +290,7 @@ export class DynamicParticles {
             nested:
             for(let j = 0; j < particles.length; j++) {
                 let p = particles[j];
-                if(distances.length > p.boid.groupSize) { break nested; }
+                if(distances.length > p0.boid.groupSize || j > p0.boid.searchLimit) { break nested; }
 
                 let randj = Math.floor(Math.random()*particles.length); // Get random index
                 if(j===i || randj === i || inRange.indexOf(randj) > -1) {  } else {
