@@ -51,7 +51,7 @@
                 boid:{
                     boundingBox:{left:0,right:1,bot:1,top:0,front:0,back:1}, //bounding box, 1 = max height/width of render window
                     cohesion:0.03,
-                    separation:0.3,
+                    separation:0.03,
                     alignment:0.006,
                     useSwirl:true,
                     swirl:{x:0.5,y:0.5,z:0.5,mul:0.003},
@@ -77,8 +77,9 @@
                     reproductionRange:[3,3], //nCell neighbors range required to produce a living cell
                     groupRadius:10 //pixel distance for grouping 
                 }
-            
-            }
+            };
+
+
 
             this.init();
             
@@ -158,6 +159,9 @@
         defaultBoidGroupRule = (particle,rule) => {
 
             particle.rule = rule[0];
+            if(rule[1] > 3000 && rule[1] < 5000) {particle.boid.searchLimit = 5;}
+            else if (rule[1]>=5000) {particle.boid.searchLimit = 1;}
+
             if(this.canvas) {
                 let h = this.canvas.height;
                 let w = this.canvas.width;
@@ -297,7 +301,7 @@
                 nested:
                 for(let j = 0; j < particles.length; j++) {
                     let p = particles[j];
-                    if(distances.length > p0.boid.groupSize || j > p0.boid.searchLimit) { break nested; }
+                    if(distances.length > p0.boid.groupSize || j >= p0.boid.searchLimit) { break nested; }
 
                     let randj = Math.floor(Math.random()*particles.length); // Get random index
                     if(j===i || randj === i || inRange.indexOf(randj) > -1) {  } else {
@@ -333,19 +337,23 @@
                         }
                     }
                 }    
-         
-                cohesionVec[0] = p0.boid.cohesion*(cohesionVec[0]/groupCount-p0.position.x);
-                cohesionVec[1] = p0.boid.cohesion*(cohesionVec[1]/groupCount-p0.position.y);
-                cohesionVec[2] = p0.boid.cohesion*(cohesionVec[2]/groupCount-p0.position.z);
+
+
+                let _groupCount = 1/groupCount;
+        
+                cohesionVec[0] = p0.boid.cohesion*(cohesionVec[0]*_groupCount-p0.position.x);
+                cohesionVec[1] = p0.boid.cohesion*(cohesionVec[1]*_groupCount-p0.position.y);
+                cohesionVec[2] = p0.boid.cohesion*(cohesionVec[2]*_groupCount-p0.position.z);
                 
-                alignmentVec[0] = -(p0.boid.alignment*alignmentVec[1]/groupCount);
-                alignmentVec[1] = p0.boid.alignment*alignmentVec[0]/groupCount;
-                alignmentVec[2] = p0.boid.alignment*alignmentVec[2]/groupCount;//Use a perpendicular vector [-y,x,z]
+                alignmentVec[0] = -(p0.boid.alignment*alignmentVec[1]*_groupCount);
+                alignmentVec[1] = p0.boid.alignment*alignmentVec[0]*_groupCount;
+                alignmentVec[2] = p0.boid.alignment*alignmentVec[2]*_groupCount;//Use a perpendicular vector [-y,x,z]
         
                 separationVec[0] = p0.boid.separation*separationVec[0];
                 separationVec[1] = p0.boid.separation*separationVec[1];
                 separationVec[2] = p0.boid.separation*separationVec[2];
-                
+            
+
                 const swirlVec = [0,0,0];
                 if(p0.boid.useSwirl == true){
                     swirlVec[0] = -(p0.position.y-p0.boid.swirl.y)*p0.boid.swirl.mul;
@@ -359,6 +367,7 @@
                     attractorVec[1] = (p0.boid.attractor.y-p0.position.y)*p0.boid.attractor.mul;
                     attractorVec[2] = (p0.boid.attractor.z-p0.position.z)*p0.boid.attractor.mul;
                 }
+            
                 //console.log(attractorVec)
 
                 //if(i===0) console.log(p0, p0.position, p0.velocity, cohesionVec,separationVec,alignmentVec,swirlVec,attractorVec)
@@ -583,7 +592,7 @@
         }
 
         let particleTest = new DynamicParticles(
-            [['boids',1500],['boids',1000],['boids',500]],
+            [['boids',4000],['boids',1000],['boids',1000]],
             document.getElementById('canvas'),
             true
         );
