@@ -319,7 +319,7 @@ export class DynamicParticles {
 
     defaultTimestepFunc = (group,timeStep)=>{ //what happens on each time step?
 
-        if(group.particles.length < groupmax) {
+        if(group.particles.length < group.max) {
             let max = group.max;
             let count = group.particles.length;
             if(group.spawnRate) {
@@ -599,7 +599,7 @@ export class DynamicParticles {
         if(success) {
             let expiredidx = [];
             // let anchorTick = timeStep*0.05;
-            if(group.particles.length < groupmax) {
+            if(group.particles.length < group.max) {
                 let max = group.max;
                 let count = group.particles.length;
                 if(group.spawnRate) {
