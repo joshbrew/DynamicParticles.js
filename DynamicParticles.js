@@ -27,7 +27,7 @@ export class DynamicParticles {
                     initialCount //initial count of particles (spawns all if undefined) 
                     useBoids, //use boids? mainly applies to the default function unless you integrate this into your own rules
                     timestepFunc, (per particle timestep, groups have additional rules for efficient scoping)
-                    
+                    avoidanceGroups, index of groups to calculate avoidance (based on the this.particles index of the group)
                 ], etc...
             ]
         */
@@ -84,7 +84,7 @@ export class DynamicParticles {
                 useAttraction:false, //particles can attract each other on a curve
                 groupRadius:200,
                 groupSize:10,
-                searchLimit:25
+                searchLimit:10
             },
             plant:{
                 diet:"photosynthetic", //if plant or animal cell: herbivore, carnivore, omnivore, photosynthetic, dead, dead_animal, dead_plant. Determines what other particles they will consume/trend toward
@@ -188,7 +188,7 @@ export class DynamicParticles {
 
         particle.type = rule[0];
 
-        if(rule[1] > 3000 && rule[1] < 5000) {particle.boid.searchLimit = 5;}
+        if(rule[1] > 3000 && rule[1] < 5000) {particle.boid.searchLimit = 3;}
         else if (rule[1]>=5000) {particle.boid.searchLimit = 1;}
 
         let avoidanceGroups = rule[7];
