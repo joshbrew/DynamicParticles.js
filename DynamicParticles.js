@@ -31,7 +31,7 @@ export class DynamicParticles {
             velocity:{x:0,y:0,z:0},
             acceleration:{x:0,y:0,z:0},
             force:{x:0,y:0,z:0},
-            timestepFunc: undefined,//(particle,timeStep)=>{} per-particle step function you can customize
+            timestepFunc: undefined,//(group, particle,timeStep)=>{} per-particle step function you can customize
             type:"boids", //Behavior trees: boids, predators, plant cell, animal cell, algae, bacteria, atom, proton, neutron, electron, conway, can combine
             particleSize: 5,
             startingX: 0.5, 
