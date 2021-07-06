@@ -6,6 +6,12 @@ It comes with boids by default, they are very efficient and I had 10,000 on scre
 
 https://user-images.githubusercontent.com/18196383/124330212-c9354200-db41-11eb-99c9-c73f86fdce3c.mp4
 
+3D example
+https://app.brainsatplay.com/#Boids
+
+![birdmoney](https://user-images.githubusercontent.com/18196383/124544444-f735b300-dddb-11eb-84f9-647736994b45.png)
+
+
 Example Usage:
 
 `npm i dynamicparticles`
