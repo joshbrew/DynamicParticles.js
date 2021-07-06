@@ -1,7 +1,7 @@
 {
   "name": "dynamicparticles",
   "description": "Dynamic particle rendering. Make groups of particles and set custom rulesets. Comes with efficient boids (3.2K rendered in a canvas @60fps) and a toggleable default canvas renderer built in for quick testing.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
