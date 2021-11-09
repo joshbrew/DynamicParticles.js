@@ -6,13 +6,17 @@ export class DynamicParticles {
         ['boids',50]
         ], 
         canvas=undefined,
-        defaultCanvas=true
+        defaultCanvas=true,
+        init=true
     ) {
         
         this.canvas = canvas;
         this.defaultCanvas=defaultCanvas;
         this.ctx = undefined;
         this.looping = false;
+        this.currFrame = performance.now()*0.001; 
+        this.frameOffset = undefined;
+        this.ticks = 0;
 
         this.startingRules = rules;
 
@@ -27,7 +31,7 @@ export class DynamicParticles {
                     initialCount //initial count of particles (spawns all if undefined) 
                     useBoids, //use boids? mainly applies to the default function unless you integrate this into your own rules
                     timestepFunc, (per particle timestep, groups have additional rules for efficient scoping)
-                    avoidanceGroups, index of groups to calculate avoidance (based on the this.particles index of the group)
+                    
                 ], etc...
             ]
         */
@@ -36,9 +40,6 @@ export class DynamicParticles {
 
         this.particles = [];
         this.maxParticles = 0; //max possible particles based on rulesets
-        this.startingRules.forEach((rule)=>{
-            this.totalParticles += rule[1];
-        });
 
         this.colorScale = ['#000000', '#030106', '#06010c', '#090211', '#0c0215', '#0e0318', '#10031b', '#12041f', '#130522', '#140525', '#150628', '#15072c', '#16082f', '#160832', '#160936', '#160939', '#17093d', '#170a40', '#170a44', '#170a48', '#17094b', '#17094f', '#170953', '#170956', '#16085a', '#16085e', '#150762', '#140766', '#140669', '#13066d', '#110571', '#100475', '#0e0479', '#0b037d', '#080281', '#050185', '#020089', '#00008d', '#000090', '#000093', '#000096', '#000099', '#00009c', '#00009f', '#0000a2', '#0000a5', '#0000a8', '#0000ab', '#0000ae', '#0000b2', '#0000b5', '#0000b8', '#0000bb', '#0000be', '#0000c1', '#0000c5', '#0000c8', '#0000cb', '#0000ce', '#0000d1', '#0000d5', '#0000d8', '#0000db', '#0000de', '#0000e2', '#0000e5', '#0000e8', '#0000ec', '#0000ef', '#0000f2', '#0000f5', '#0000f9', '#0000fc', '#0803fe', '#2615f9', '#3520f4', '#3f29ef', '#4830eb', '#4e37e6', '#543ee1', '#5944dc', '#5e49d7', '#614fd2', '#6554cd', '#6759c8', '#6a5ec3', '#6c63be', '#6e68b9', '#6f6db4', '#7072af', '#7177aa', '#717ba5', '#7180a0', '#71859b', '#718996', '#708e91', '#6f928b', '#6e9786', '#6c9b80', '#6aa07b', '#68a475', '#65a96f', '#62ad69', '#5eb163', '#5ab65d', '#55ba56', '#4fbf4f', '#48c347', '#40c73f', '#36cc35', '#34ce32', '#37cf31', '#3ad130', '#3cd230', '#3fd32f', '#41d52f', '#44d62e', '#46d72d', '#48d92c', '#4bda2c', '#4ddc2b', '#4fdd2a', '#51de29', '#53e029', '#55e128', '#58e227', '#5ae426', '#5ce525', '#5ee624', '#60e823', '#62e922', '#64eb20', '#66ec1f', '#67ed1e', '#69ef1d', '#6bf01b', '#6df11a', '#6ff318', '#71f416', '#73f614', '#75f712', '#76f810', '#78fa0d', '#7afb0a', '#7cfd06', '#7efe03', '#80ff00', '#85ff00', '#89ff00', '#8eff00', '#92ff00', '#96ff00', '#9aff00', '#9eff00', '#a2ff00', '#a6ff00', '#aaff00', '#adff00', '#b1ff00', '#b5ff00', '#b8ff00', '#bcff00', '#bfff00', '#c3ff00', '#c6ff00', '#c9ff00', '#cdff00', '#d0ff00', '#d3ff00', '#d6ff00', '#daff00', '#ddff00', '#e0ff00', '#e3ff00', '#e6ff00', '#e9ff00', '#ecff00', '#efff00', '#f3ff00', '#f6ff00', '#f9ff00', '#fcff00', '#ffff00', '#fffb00', '#fff600', '#fff100', '#ffec00', '#ffe700', '#ffe200', '#ffdd00', '#ffd800', '#ffd300', '#ffcd00', '#ffc800', '#ffc300', '#ffbe00', '#ffb900', '#ffb300', '#ffae00', '#ffa900', '#ffa300', '#ff9e00', '#ff9800', '#ff9300', '#ff8d00', '#ff8700', '#ff8100', '#ff7b00', '#ff7500', '#ff6f00', '#ff6800', '#ff6100', '#ff5a00', '#ff5200', '#ff4900', '#ff4000', '#ff3600', '#ff2800', '#ff1500', '#ff0004', '#ff000c', '#ff0013', '#ff0019', '#ff001e', '#ff0023', '#ff0027', '#ff002b', '#ff012f', '#ff0133', '#ff0137', '#ff013b', '#ff023e', '#ff0242', '#ff0246', '#ff0349', '#ff034d', '#ff0450', '#ff0454', '#ff0557', '#ff065b', '#ff065e', '#ff0762', '#ff0865', '#ff0969', '#ff0a6c', '#ff0a70', '#ff0b73', '#ff0c77', '#ff0d7a', '#ff0e7e', '#ff0f81', '#ff1085', '#ff1188', '#ff128c', '#ff138f', '#ff1493'];
 
@@ -68,11 +69,11 @@ export class DynamicParticles {
             boundingBox:{left:0,right:1,bot:1,top:0,front:0,back:1}, //bounding box, 1 = max height/width of render window
             boid:{
                 boundingBox:{left:0,right:1,bot:1,top:0,front:0,back:1}, //bounding box, 1 = max height/width of render window
-                cohesion:0.003,
+                cohesion:0.001,
                 separation:0.0001,
                 alignment:0.006,
-                swirl:{x:0.5,y:0.5,z:0.5,mul:0.002},
-                attractor:{x:0.5,y:0.5,z:0.5,mul:0.003},
+                swirl:{x:0.5,y:0.5,z:0.5,mul:0.003},
+                attractor:{x:0.5,y:0.5,z:0.5,mul:0.002},
                 avoidance:{groups:[],mul:0.1},
                 useCohesion:true,
                 useSeparation:true,
@@ -105,7 +106,7 @@ export class DynamicParticles {
             
         };
 
-        this.init();
+        if(init) this.init();
         
     }
 
@@ -115,15 +116,22 @@ export class DynamicParticles {
             window.addEventListener('resize',this.onresize());
         }
 
+        this.setupRules(rules);
+        this.startingRules = rules;
+
+        if(!this.looping) {
+            this.currFrame = performance.now()*0.001;
+            this.looping = true;
+            this.loop();
+        }
+    }
+
+    setupRules(rules=this.startingRules) {
         rules.forEach((rule,i) => {
             //console.log(rule)
             let group = this.addGroup(rule);
         });
-
-        if(!this.looping) {
-            this.looping = true;
-            this.loop();
-        }
+        return this.particles;
     }
 
     deinit = () => {
@@ -351,6 +359,8 @@ export class DynamicParticles {
             if(p.velocity.z !== 0){
                 p.position.z += p.velocity.z*timeStep;
             }
+
+            //if(i === 0) console.log(p.velocity,p.position,timeStep);
 
             this.checkParticleBounds(p);
 
@@ -616,6 +626,7 @@ export class DynamicParticles {
         let useBoids = rule[5]; //for the default function
         if(type === 'boids') useBoids = true; //default true for this rule
         let pTimestepFunc = rule[6];
+        
 
         if(!rule[0] || !rule[1]) return false;
 
@@ -635,9 +646,9 @@ export class DynamicParticles {
 
         let newGroup = new Array(maxcount).fill(0);
 
-        let attractorx = Math.random()*0.5+0.25;
-        let attractory = Math.random()*0.5+0.25;
-        let attractorz = Math.random()*0.5+0.25;
+        let attractorx = Math.random()*0.4+0.35;
+        let attractory = Math.random()*0.4+0.35;
+        let attractorz = Math.random()*0.4+0.35;
 
 
         if(spawnCount){
@@ -731,12 +742,11 @@ export class DynamicParticles {
         }
     }
 
-    loop = (lastFrame=performance.now()*0.001,ticks=0) => {
-        if(this.looping === false) return; 
-        
-        let currFrame = performance.now()*0.001;
-        let timeStep = currFrame - lastFrame;
-        //console.log(timeStep,);
+    frame = (lastFrame) => {
+        if(!this.frameOffset) this.frameOffset = lastFrame;
+        this.currFrame = performance.now()*0.001+this.frameOffset;
+        let timeStep = (this.currFrame - lastFrame);
+
         if(this.defaultCanvas) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
@@ -745,7 +755,7 @@ export class DynamicParticles {
             group.timestepFunc(group,timeStep);
             
             if(isNaN(group.particles[0].position.x)) {
-                console.log(timeStep,ticks,group.particles[0]);
+                console.log(timeStep,this.ticks,group.particles[0]);
                 this.looping = false;
                 return;
             }
@@ -757,8 +767,15 @@ export class DynamicParticles {
         //     this.particles[0].particles[0].velocity
         //     );
 
-        let tick = ticks+1;
-        setTimeout(()=>{requestAnimationFrame(()=>{this.loop(currFrame,tick)})},15);
+        this.ticks++;
+        //console.log('frame time (s)', (performance.now()*0.001+this.frameOffset) - this.currFrame)
+        return this.currFrame;
+    }
+
+    loop = () => {
+        if(this.looping === false) return; 
+        this.frame(this.currFrame);
+        setTimeout(()=>{requestAnimationFrame(()=>{this.loop()})},15);
     }
 
 }
