@@ -453,9 +453,9 @@ export class DynamicParticles {
                         }
                 
                         if(p0.boid.useCohesion){
-                            boidVelocities[0] = boidVelocities[0] + pr.position.x;
-                            boidVelocities[1] = boidVelocities[1] + pr.position.y;
-                            boidVelocities[2] = boidVelocities[2] + pr.position.z;
+                            boidVelocities[0] = boidVelocities[0] + pr.position.x*distInv;
+                            boidVelocities[1] = boidVelocities[1] + pr.position.y*distInv;
+                            boidVelocities[2] = boidVelocities[2] + pr.position.z*distInv;
                         }
 
                         if(isNaN(disttemp) || isNaN(boidVelocities[0]) || isNaN(pr.position.x)) {
