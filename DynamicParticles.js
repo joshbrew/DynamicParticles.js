@@ -113,7 +113,9 @@ export class DynamicParticles {
     init = (rules=this.startingRules) => {
         if(this.canvas && this.defaultCanvas) {
             this.ctx = this.canvas.getContext("2d");
-            window.addEventListener('resize',this.onresize());
+        }
+        if(this.canvas) {
+            window.addEventListener('resize',this.onresize);
         }
 
         this.setupRules(rules);
@@ -137,7 +139,7 @@ export class DynamicParticles {
     deinit = () => {
         this.looping = false;
         if(this.canvas) {
-         window.removeEventListener('resize',this.onresize());
+            window.removeEventListener('resize',this.onresize());
         } 
     }
     
@@ -723,26 +725,30 @@ export class DynamicParticles {
                 this.canvas.style.width = this.canvas.parentNode.clientWidth;
                 this.canvas.style.height = this.canvas.parentNode.clientHeight;
             }
+            let h = this.canvas.clientHeight;
+            let w = this.canvas.clientWidth;
             let proto = JSON.parse(JSON.stringify(this.prototype));
-            this.particles.forEach((p) => {
-                let h = this.canvas.height;
-                let w = this.canvas.width;
-                p.boundingBox = { //Auto resize based on default bounding box settings
-                    left:proto.boundingBox.left*w,
-                    right:proto.boundingBox.right*w,
-                    bot:proto.boundingBox.bot*h,
-                    top:proto.boundingBox.top*h,
-                    front:proto.boundingBox.front*h,
-                    back:proto.boundingBox.back*h
-                };
-                p.boid.boundingBox = {
-                    left:proto.boid.boundingBox.left*w,
-                    right:proto.boid.boundingBox.right*w,
-                    bot:proto.boid.boundingBox.bot*h,
-                    top:proto.boid.boundingBox.top*h,
-                    front:proto.boid.boundingBox.front*h,
-                    back:proto.boid.boundingBox.back*h
-                };
+            let bb = { //Auto resize based on default bounding box settings
+                left:proto.boundingBox.left*w,
+                right:proto.boundingBox.right*w,
+                bot:proto.boundingBox.bot*h,
+                top:proto.boundingBox.top*h,
+                front:proto.boundingBox.front*h,
+                back:proto.boundingBox.back*h
+            };
+            let bbb = {
+                left:proto.boid.boundingBox.left*w,
+                right:proto.boid.boundingBox.right*w,
+                bot:proto.boid.boundingBox.bot*h,
+                top:proto.boid.boundingBox.top*h,
+                front:proto.boid.boundingBox.front*h,
+                back:proto.boid.boundingBox.back*h
+            };;
+            this.particles.forEach((g) => {
+                g.particles.forEach((p) => {
+                    p.boundingBox = JSON.parse(JSON.stringify(bb));
+                    p.boid.boundingBox = JSON.parse(JSON.stringify(bbb));
+                })
             });
         }
     }
