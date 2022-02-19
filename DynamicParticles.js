@@ -454,9 +454,9 @@ export class DynamicParticles {
                         }
                 
                         if(p0.boid.useCohesion){
-                            boidVelocities[0] += (pr.position.x - p0.position.x)*0.5*distInv*_timeStep;
-                            boidVelocities[1] += (pr.position.y - p0.position.y)*0.5*distInv*_timeStep;
-                            boidVelocities[2] += (pr.position.z - p0.position.z)*0.5*distInv*_timeStep;
+                            boidVelocities[0] += (pr.position.x - p0.position.x)*0.5*disttemp*_timeStep;
+                            boidVelocities[1] += (pr.position.y - p0.position.y)*0.5*disttemp*_timeStep;
+                            boidVelocities[2] += (pr.position.z - p0.position.z)*0.5*disttemp*_timeStep;
                         }
 
                         if(isNaN(disttemp) || isNaN(boidVelocities[0]) || isNaN(pr.position.x)) {
@@ -476,9 +476,9 @@ export class DynamicParticles {
 
                         if(p0.boid.useAlignment){
                             //console.log(separationVec);
-                            boidVelocities[6] = (boidVelocities[6] + pr.velocity.x)*0.5*distInv; 
-                            boidVelocities[7] = (boidVelocities[7] + pr.velocity.y)*0.5*distInv;
-                            boidVelocities[8] = (boidVelocities[8] + pr.velocity.z)*0.5*distInv;
+                            boidVelocities[6] = boidVelocities[6] + pr.velocity.x*distInv; 
+                            boidVelocities[7] = boidVelocities[7] + pr.velocity.y*distInv;
+                            boidVelocities[8] = boidVelocities[8] + pr.velocity.z*distInv;
                         }
 
                         groupCount++;
@@ -529,9 +529,9 @@ export class DynamicParticles {
             } else { boidVelocities[0] = 0; boidVelocities[1] = 0; boidVelocities[2] = 0; }
 
             if(p0.boid.useSeparation){
-                boidVelocities[3] = p0.boid.separation*boidVelocities[3]*_groupCount;
-                boidVelocities[4] = p0.boid.separation*boidVelocities[4]*_groupCount;
-                boidVelocities[5] = p0.boid.separation*boidVelocities[5]*_groupCount;
+                boidVelocities[3] = p0.boid.separation*boidVelocities[3];
+                boidVelocities[4] = p0.boid.separation*boidVelocities[4];
+                boidVelocities[5] = p0.boid.separation*boidVelocities[5];
             } else { boidVelocities[3] = 0; boidVelocities[4] = 0; boidVelocities[5] = 0; }
 
             if(p0.boid.useAlignment){
@@ -542,8 +542,8 @@ export class DynamicParticles {
 
             const swirlVec = [0,0,0];
             if(p0.boid.useSwirl == true){
-                boidVelocities[9] = -(p0.position.z-p0.boid.swirl.z)*p0.boid.swirl.mul;
-                boidVelocities[10] = (p0.position.y-p0.boid.swirl.y)*p0.boid.swirl.mul;
+                boidVelocities[9] = -(p0.position.y-p0.boid.swirl.y)*p0.boid.swirl.mul;
+                boidVelocities[10] = (p0.position.z-p0.boid.swirl.z)*p0.boid.swirl.mul;
                 boidVelocities[11] = (p0.position.x-p0.boid.swirl.x)*p0.boid.swirl.mul
             }
             const attractorVec = [0,0,0];
