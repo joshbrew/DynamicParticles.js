@@ -757,6 +757,7 @@ export class DynamicParticles {
         if(!this.frameOffset) this.frameOffset = lastFrame;
         this.currFrame = performance.now()*0.001+this.frameOffset;
         let timeStep = (this.currFrame - lastFrame);
+        if(timeStep > 1) timeStep = 1; //no more than 1s updates
 
         if(this.defaultCanvas) {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
